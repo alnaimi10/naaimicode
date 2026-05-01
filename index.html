@@ -5,8 +5,144 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Naaimicode</title>
 <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+
+/* SPLASH + OMANI MUSIC */
+function startSplash(){
+  playOmaniIntro();
+  const splash = document.getElementById('splash');
+  splash.classList.add('hide');
+  setTimeout(()=>{ splash.style.display='none'; }, 1000);
+}
+
+function playOmaniIntro(){
+  try{
+    const ac = getAC();
+    const now = ac.currentTime;
+    
+    // إيقاع عماني مستوحى من يا بن عبادي
+    const melody = [
+      // نغمة افتتاحية - مقام حجاز
+      {f:293.7,t:now+0.0,d:0.4},
+      {f:329.6,t:now+0.4,d:0.2},
+      {f:349.2,t:now+0.6,d:0.4},
+      {f:392.0,t:now+1.0,d:0.3},
+      {f:440.0,t:now+1.3,d:0.5},
+      {f:392.0,t:now+1.8,d:0.2},
+      {f:349.2,t:now+2.0,d:0.4},
+      {f:329.6,t:now+2.4,d:0.3},
+      {f:293.7,t:now+2.7,d:0.6},
+      // تكرار بتنويع
+      {f:440.0,t:now+3.4,d:0.3},
+      {f:493.9,t:now+3.7,d:0.3},
+      {f:523.3,t:now+4.0,d:0.5},
+      {f:493.9,t:now+4.5,d:0.2},
+      {f:440.0,t:now+4.7,d:0.3},
+      {f:392.0,t:now+5.0,d:0.4},
+      {f:349.2,t:now+5.4,d:0.3},
+      {f:329.6,t:now+5.7,d:0.4},
+      {f:293.7,t:now+6.1,d:0.8},
+    ];
+
+    melody.forEach(n=>{
+      const o=ac.createOscillator();
+      const g=ac.createGain();
+      const filt=ac.createBiquadFilter();
+      filt.type='lowpass'; filt.frequency.value=800;
+      o.connect(filt); filt.connect(g); g.connect(ac.destination);
+      o.type='triangle';
+      o.frequency.value=n.f;
+      g.gain.setValueAtTime(0,n.t);
+      g.gain.linearRampToValueAtTime(0.18,n.t+0.05);
+      g.gain.exponentialRampToValueAtTime(0.001,n.t+n.d+0.1);
+      o.start(n.t); o.stop(n.t+n.d+0.15);
+    });
+
+    // إيقاع دف
+    [0,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3.0,3.3,3.6,3.9,4.2,4.5,4.8,5.1,5.4,5.7,6.0,6.3].forEach((t,i)=>{
+      const o=ac.createOscillator();
+      const g=ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type='sine';
+      o.frequency.value= i%2===0 ? 120 : 90;
+      g.gain.setValueAtTime(0.12,now+t);
+      g.gain.exponentialRampToValueAtTime(0.001,now+t+0.15);
+      o.start(now+t); o.stop(now+t+0.2);
+    });
+
+  }catch(e){}
+}
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js">
+
+/* SPLASH + OMANI MUSIC */
+function startSplash(){
+  playOmaniIntro();
+  const splash = document.getElementById('splash');
+  splash.classList.add('hide');
+  setTimeout(()=>{ splash.style.display='none'; }, 1000);
+}
+
+function playOmaniIntro(){
+  try{
+    const ac = getAC();
+    const now = ac.currentTime;
+    
+    // إيقاع عماني مستوحى من يا بن عبادي
+    const melody = [
+      // نغمة افتتاحية - مقام حجاز
+      {f:293.7,t:now+0.0,d:0.4},
+      {f:329.6,t:now+0.4,d:0.2},
+      {f:349.2,t:now+0.6,d:0.4},
+      {f:392.0,t:now+1.0,d:0.3},
+      {f:440.0,t:now+1.3,d:0.5},
+      {f:392.0,t:now+1.8,d:0.2},
+      {f:349.2,t:now+2.0,d:0.4},
+      {f:329.6,t:now+2.4,d:0.3},
+      {f:293.7,t:now+2.7,d:0.6},
+      // تكرار بتنويع
+      {f:440.0,t:now+3.4,d:0.3},
+      {f:493.9,t:now+3.7,d:0.3},
+      {f:523.3,t:now+4.0,d:0.5},
+      {f:493.9,t:now+4.5,d:0.2},
+      {f:440.0,t:now+4.7,d:0.3},
+      {f:392.0,t:now+5.0,d:0.4},
+      {f:349.2,t:now+5.4,d:0.3},
+      {f:329.6,t:now+5.7,d:0.4},
+      {f:293.7,t:now+6.1,d:0.8},
+    ];
+
+    melody.forEach(n=>{
+      const o=ac.createOscillator();
+      const g=ac.createGain();
+      const filt=ac.createBiquadFilter();
+      filt.type='lowpass'; filt.frequency.value=800;
+      o.connect(filt); filt.connect(g); g.connect(ac.destination);
+      o.type='triangle';
+      o.frequency.value=n.f;
+      g.gain.setValueAtTime(0,n.t);
+      g.gain.linearRampToValueAtTime(0.18,n.t+0.05);
+      g.gain.exponentialRampToValueAtTime(0.001,n.t+n.d+0.1);
+      o.start(n.t); o.stop(n.t+n.d+0.15);
+    });
+
+    // إيقاع دف
+    [0,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3.0,3.3,3.6,3.9,4.2,4.5,4.8,5.1,5.4,5.7,6.0,6.3].forEach((t,i)=>{
+      const o=ac.createOscillator();
+      const g=ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type='sine';
+      o.frequency.value= i%2===0 ? 120 : 90;
+      g.gain.setValueAtTime(0.12,now+t);
+      g.gain.exponentialRampToValueAtTime(0.001,now+t+0.15);
+      o.start(now+t); o.stop(now+t+0.2);
+    });
+
+  }catch(e){}
+}
+
+</script>
 <style>
 :root{--red:#C8102E;--green:#007A3D;--gold:#C9943A;--gold2:#E8B84B;--dark:#1A120B;--brown:#3D2B1F;--s1:#2C1E14;--s2:#3D2B1F;--bord:#6B4F35;--text:#F5EFE0;--dim:#C9B49A;--blue:#1B4F8A;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -108,9 +244,40 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
 @keyframes wB{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 .wt{font-family:'Scheherazade New',serif;font-size:clamp(34px,8vw,68px);font-weight:700;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 @media(max-width:500px){.board{gap:5px;}.card{min-height:48px;font-size:10px;}.sgrid{gap:4px;}.sc{min-height:36px;font-size:9px;}.rgrid{gap:8px;}}
+
+/* SPLASH SCREEN */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;transition:opacity 1s ease;}
+#splash.hide{opacity:0;pointer-events:none;}
+.splash-khanjar{font-size:80px;animation:kFloat 2s ease-in-out infinite;}
+@keyframes kFloat{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-15px) rotate(5deg)}}
+.splash-title{font-family:'Scheherazade New',serif;font-size:clamp(48px,14vw,110px);font-weight:700;background:linear-gradient(135deg,var(--gold),var(--gold2),var(--red),var(--gold));background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gShim 3s ease-in-out infinite;}
+.splash-subtitle{font-family:'Scheherazade New',serif;font-size:22px;color:var(--gold);opacity:.9;}
+.splash-creator{font-size:13px;color:var(--dim);letter-spacing:2px;margin-top:8px;}
+.splash-creator span{color:var(--gold2);font-weight:700;}
+.splash-stripe{width:80%;height:5px;border-radius:3px;background:linear-gradient(90deg,#007A3D 0%,#007A3D 33%,#F5EFE0 33%,#F5EFE0 36%,#C8102E 36%,#C8102E 64%,#F5EFE0 64%,#F5EFE0 67%,#007A3D 67%,#007A3D 100%);margin:10px 0;}
+.splash-orn{color:var(--gold);font-size:22px;letter-spacing:10px;opacity:.7;}
+.splash-tap{font-size:14px;color:var(--dim);animation:blink 1.5s ease-in-out infinite;margin-top:10px;}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.splash-btn{background:linear-gradient(135deg,var(--gold),#8A6010);color:var(--dark);border:none;border-radius:50px;padding:14px 44px;font-family:'Scheherazade New',serif;font-size:22px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(201,148,58,.4);transition:all .22s;margin-top:10px;}
+.splash-btn:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(201,148,58,.6);}
 </style>
 </head>
 <body>
+
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="stripe" style="position:fixed;top:0;left:0;right:0;"></div>
+  <div class="splash-orn">✦ ✦ ✦</div>
+  <div class="splash-khanjar">🗡️</div>
+  <div class="splash-title">Naaimicode</div>
+  <div class="splash-subtitle">نعيمي كود</div>
+  <div class="splash-stripe"></div>
+  <div class="splash-creator">تصميم وتطوير: <span>أسامة النعيمي</span></div>
+  <div class="splash-orn" style="margin-top:8px;">✦ ✦ ✦</div>
+  <button class="splash-btn" onclick="startSplash()">🎮 ادخل اللعبة</button>
+  <div class="stripe" style="position:fixed;bottom:0;left:0;right:0;"></div>
+</div>
 
 <div id="intro" class="scr on">
   <div class="stripe"></div>
@@ -125,6 +292,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;back
       <div class="tbox b"><div class="tlbl">🔵 الفريق الأزرق</div><input id="blueName" class="inp" value="الفريق الأزرق" maxlength="16"></div>
     </div>
     <button class="btn-gold" onclick="createGame()">⚔️ ابدأ اللعبة</button>
+    <div style="font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:4px;">تصميم: <span style="color:var(--gold2);">أسامة النعيمي</span></div>
     <div id="introErr" style="color:#ff6677;font-size:13px;display:none;"></div>
   </div>
   <div class="stripe" style="position:fixed;bottom:0;left:0;right:0;"></div>
@@ -415,6 +583,74 @@ function renderWin(st){
 function newGame(){if(polling)polling.off('value');location.href=location.href.split('?')[0];}
 
 function joinAs(role,color){S.click();myRole=role;myColor=color;startListening();}
+
+
+/* SPLASH + OMANI MUSIC */
+function startSplash(){
+  playOmaniIntro();
+  const splash = document.getElementById('splash');
+  splash.classList.add('hide');
+  setTimeout(()=>{ splash.style.display='none'; }, 1000);
+}
+
+function playOmaniIntro(){
+  try{
+    const ac = getAC();
+    const now = ac.currentTime;
+    
+    // إيقاع عماني مستوحى من يا بن عبادي
+    const melody = [
+      // نغمة افتتاحية - مقام حجاز
+      {f:293.7,t:now+0.0,d:0.4},
+      {f:329.6,t:now+0.4,d:0.2},
+      {f:349.2,t:now+0.6,d:0.4},
+      {f:392.0,t:now+1.0,d:0.3},
+      {f:440.0,t:now+1.3,d:0.5},
+      {f:392.0,t:now+1.8,d:0.2},
+      {f:349.2,t:now+2.0,d:0.4},
+      {f:329.6,t:now+2.4,d:0.3},
+      {f:293.7,t:now+2.7,d:0.6},
+      // تكرار بتنويع
+      {f:440.0,t:now+3.4,d:0.3},
+      {f:493.9,t:now+3.7,d:0.3},
+      {f:523.3,t:now+4.0,d:0.5},
+      {f:493.9,t:now+4.5,d:0.2},
+      {f:440.0,t:now+4.7,d:0.3},
+      {f:392.0,t:now+5.0,d:0.4},
+      {f:349.2,t:now+5.4,d:0.3},
+      {f:329.6,t:now+5.7,d:0.4},
+      {f:293.7,t:now+6.1,d:0.8},
+    ];
+
+    melody.forEach(n=>{
+      const o=ac.createOscillator();
+      const g=ac.createGain();
+      const filt=ac.createBiquadFilter();
+      filt.type='lowpass'; filt.frequency.value=800;
+      o.connect(filt); filt.connect(g); g.connect(ac.destination);
+      o.type='triangle';
+      o.frequency.value=n.f;
+      g.gain.setValueAtTime(0,n.t);
+      g.gain.linearRampToValueAtTime(0.18,n.t+0.05);
+      g.gain.exponentialRampToValueAtTime(0.001,n.t+n.d+0.1);
+      o.start(n.t); o.stop(n.t+n.d+0.15);
+    });
+
+    // إيقاع دف
+    [0,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3.0,3.3,3.6,3.9,4.2,4.5,4.8,5.1,5.4,5.7,6.0,6.3].forEach((t,i)=>{
+      const o=ac.createOscillator();
+      const g=ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type='sine';
+      o.frequency.value= i%2===0 ? 120 : 90;
+      g.gain.setValueAtTime(0.12,now+t);
+      g.gain.exponentialRampToValueAtTime(0.001,now+t+0.15);
+      o.start(now+t); o.stop(now+t+0.2);
+    });
+
+  }catch(e){}
+}
+
 </script>
 </body>
 </html>
