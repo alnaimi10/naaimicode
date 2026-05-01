@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Naaimicode — نعيمي كود</title>
 <link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
 <style>
 :root{
   --red:#C8102E;--green:#007A3D;--gold:#C9943A;--gold2:#E8B84B;
@@ -577,27 +576,40 @@ function updateTimerUI(){
 }
 
 async function onTimerEnd(){
-  const st=await gameRef.once('value').then(s=>s.val());
+  const st=await fbGet('games/'+binId);
   if(!st||st.gameOver) return;
   if(timerTarget==='spy' && st.currentTurn===myColor && !st.clueGiven){
     // auto-skip spy turn
-    await gameRef.update({currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,guessesLeft:0,log:`⏰ انتهى وقت قائد ${myColor==='red'?st.redName:st.blueName}! تغيير الدور`,ts:Date.now()});
+    await fbUpdate('games/'+binId,{currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,guessesLeft:0,log:`⏰ انتهى وقت قائد ${myColor==='red'?st.redName:st.blueName}! تغيير الدور`,ts:Date.now()});
   } else if(timerTarget==='team' && st.currentTurn===myColor && st.clueGiven){
     // auto-end team turn
-    await gameRef.update({currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,guessesLeft:0,log:`⏰ انتهى وقت ${myColor==='red'?st.redName:st.blueName}! تغيير الدور`,ts:Date.now()});
+    await fbUpdate('games/'+binId,{currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,guessesLeft:0,log:`⏰ انتهى وقت ${myColor==='red'?st.redName:st.blueName}! تغيير الدور`,ts:Date.now()});
   }
 }
 
 /* ══════════════ FIREBASE ══════════════ */
-let db=null,gameRef=null,binId=null,myRole=null,myColor=null,myName='';
+let gameRef=null,binId=null,myRole=null,myColor=null,myName='';
 let prevTurn='';
+let pollInterval=null;
+let lastData=null;
 
-firebase.initializeApp({
-  apiKey:"AIzaSyCD3ysDqf6R5DZGz8SuVGtjTrXyWeZkgJw",
-  databaseURL:"https://naaimicode-default-rtdb.firebaseio.com",
-  projectId:"naaimicode"
-});
-db=firebase.database();
+const DB='https://naaimicode-default-rtdb.firebaseio.com';
+
+async function fbGet(path){
+  const r=await fetch(`${DB}/${path}.json?t=${Date.now()}`);
+  return await r.json();
+}
+async function fbSet(path,data){
+  await fetch(`${DB}/${path}.json`,{method:'PUT',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}});
+}
+async function fbUpdate(path,data){
+  await fetch(`${DB}/${path}.json`,{method:'PATCH',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}});
+}
+async function fbPush(path,data){
+  const r=await fetch(`${DB}/${path}.json`,{method:'POST',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}});
+  const j=await r.json();
+  return j.name;
+}
 
 /* ══════════════ WORDS ══════════════ */
 const POOL=['شمس','قمر','نجم','بحر','جبل','نهر','غابة','صحراء','ثلج','مطر','سيف','درع','قلعة','ملك','وزير','فرس','تنين','سحر','كنز','خريطة','سفينة','طائرة','قطار','سيارة','دراجة','مركبة','صاروخ','قارب','حصان','فيل','ذهب','فضة','ماس','لؤلؤ','زمرد','ياقوت','عقيق','مرجان','كهرمان','عاج','طبيب','مهندس','معلم','شرطي','طيار','بحار','فارس','تاجر','شاعر','رسام','نخلة','خنجر','حصن','تمر','بخور','عود','ناقة','صقر','محار','فانوس','خيمة','واحة','فلج','دلة','لباني','غاف','سدرة','حديقة','صبار','رمال','أسد','نمر','دب','ذئب','ثعلب','أرنب','غزال','فهد','وحيد','ببر','قلم','كتاب','مفتاح','باب','نافذة','سلم','مصباح','ساعة','مرآة','ورقة','حلم','أمل','فرح','حزن','خوف','شجاعة','حكمة','صدق','وفاء','عدل'];
@@ -628,9 +640,7 @@ async function createGame(){
     ts:Date.now()
   };
   try{
-    const ref=db.ref('games').push();
-    binId=ref.key;
-    await ref.set(state);
+    binId=await fbPush('games',state);
     populateLinks(binId);
     go('setup');
   }catch(e){
@@ -685,7 +695,7 @@ function startPlaying(){
   if(!myRole||!myColor){alert('اختر دورك أولاً!');return;}
   // Register player
   if(binId){
-    db.ref(`games/${binId}/players/${myName}_${myColor}_${myRole}`).set({
+    fbSet(`games/${binId}/players/${myName}_${myColor}_${myRole}`,{
       name:myName,color:myColor,role:myRole,ts:Date.now()
     });
   }
@@ -708,20 +718,21 @@ function startPlaying(){
 /* ══════════════ REALTIME ══════════════ */
 function startListening(){
   go('loading');
-  gameRef=db.ref('games/'+binId);
-  gameRef.on('value',snap=>{
-    const st=snap.val();
-    if(!st){go('intro');return;}
-    if(st.gameOver){renderWin(st);return;}
-    if(myRole==='spy') renderSpy(st);
-    else renderTeam(st);
-    // Handle turn change
-    if(prevTurn && prevTurn!==st.currentTurn){
-      // turn changed — restart timer if needed
-      handleTurnTimer(st);
-    }
-    prevTurn=st.currentTurn;
-  });
+  if(pollInterval) clearInterval(pollInterval);
+  pollInterval=setInterval(async()=>{
+    try{
+      const st=await fbGet('games/'+binId);
+      if(!st){go('intro');return;}
+      const stStr=JSON.stringify({r:st.revealed,c:st.currentTurn,cl:st.clueGiven,cw:st.clueWord,go:st.gameOver,log:st.log,p:st.pickers});
+      if(stStr===lastData) return;
+      lastData=stStr;
+      if(st.gameOver){renderWin(st);return;}
+      if(myRole==='spy') renderSpy(st);
+      else renderTeam(st);
+      if(prevTurn && prevTurn!==st.currentTurn) handleTurnTimer(st);
+      prevTurn=st.currentTurn;
+    }catch(e){console.log('poll error',e);}
+  },1200);
 }
 
 function handleTurnTimer(st){
@@ -779,9 +790,9 @@ async function giveClue(){
   const n=parseInt(document.getElementById('sCN').value)||1;
   if(!w){alert('اكتب كلمة التلميح!');return;}
   S.clue();stopTimer();
-  const snap=await gameRef.once('value');const st=snap.val();
+  const st=await fbGet('games/'+binId);
   const hist=[...(st.clueHistory||[]),{word:w,count:n,color:myColor,by:myName,turn:(st.clueHistory||[]).length+1}];
-  await gameRef.update({clueWord:w,clueCount:n,guessesLeft:n+1,clueGiven:true,clueHistory:hist,log:`💬 ${myName}: التلميح "${w}" (${n})`,ts:Date.now()});
+  await fbUpdate('games/'+binId,{clueWord:w,clueCount:n,guessesLeft:n+1,clueGiven:true,clueHistory:hist,log:`💬 ${myName}: التلميح "${w}" (${n})`,ts:Date.now()});
 }
 
 /* ══════════════ TEAM RENDER ══════════════ */
@@ -879,7 +890,7 @@ function renderClueHistory(history){
 
 async function pickCard(i,st){
   S.click();
-  const snap=await gameRef.once('value');const s=snap.val();
+  const s=await fbGet('games/'+binId);
   if(!s||s.revealed[i]||s.gameOver)return;
   const newRev=[...s.revealed];newRev[i]=true;
   const newPick=[...(s.pickers||Array(25).fill(''))];newPick[i]=myName;
@@ -890,7 +901,7 @@ async function pickCard(i,st){
     S.death();flashScreen('red-flash');animCard(i,'death');
     const winner=myColor==='red'?'blue':'red';
     const wname=winner==='red'?s.redName:s.blueName;
-    await gameRef.update({...upd,gameOver:true,winner,log:`💀 ${myName} اختار "${word}" — الكلمة السوداء! ${wname} فاز!`});
+    await fbUpdate('games/'+binId,{...upd,gameOver:true,winner,log:`💀 ${myName} اختار "${word}" — الكلمة السوداء! ${wname} فاز!`});
     return;
   }
 
@@ -899,13 +910,13 @@ async function pickCard(i,st){
   const rs=upd.redScore!==undefined?upd.redScore:s.redScore;
   const bs=upd.blueScore!==undefined?upd.blueScore:s.blueScore;
 
-  if(rs>=9){S.win();spawnConfetti();await gameRef.update({...upd,gameOver:true,winner:'red',log:`🏆 ${s.redName} فاز!`});return;}
-  if(bs>=8){S.win();spawnConfetti();await gameRef.update({...upd,gameOver:true,winner:'blue',log:`🏆 ${s.blueName} فاز!`});return;}
+  if(rs>=9){S.win();spawnConfetti();await fbUpdate('games/'+binId,{...upd,gameOver:true,winner:'red',log:`🏆 ${s.redName} فاز!`});return;}
+  if(bs>=8){S.win();spawnConfetti();await fbUpdate('games/'+binId,{...upd,gameOver:true,winner:'blue',log:`🏆 ${s.blueName} فاز!`});return;}
 
   if(type!==myColor){
     S.wrong();flashScreen('red-flash');animCard(i,'wrong');
     stopTimer();
-    await gameRef.update({...upd,currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,guessesLeft:0,log:`❌ ${myName} اختار "${word}" — خاطئة! تغيير الدور`});
+    await fbUpdate('games/'+binId,{...upd,currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,guessesLeft:0,log:`❌ ${myName} اختار "${word}" — خاطئة! تغيير الدور`});
     return;
   }
 
@@ -913,22 +924,22 @@ async function pickCard(i,st){
   const gl=(s.guessesLeft||1)-1;
   if(gl<=0){
     stopTimer();
-    await gameRef.update({...upd,guessesLeft:0,currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,log:`✅ ${myName} اختار "${word}" — صحيح! انتهت التخمينات`});
+    await fbUpdate('games/'+binId,{...upd,guessesLeft:0,currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,log:`✅ ${myName} اختار "${word}" — صحيح! انتهت التخمينات`});
   } else {
-    await gameRef.update({...upd,guessesLeft:gl,log:`✅ ${myName} اختار "${word}" — صحيح! (${gl} متبقٍ)`});
+    await fbUpdate('games/'+binId,{...upd,guessesLeft:gl,log:`✅ ${myName} اختار "${word}" — صحيح! (${gl} متبقٍ)`});
   }
 }
 
 async function endTurn(){
   S.click();stopTimer();
-  const snap=await gameRef.once('value');const s=snap.val();
-  await gameRef.update({currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,guessesLeft:0,log:`⏭ ${myName} أنهى الدور`,ts:Date.now()});
+  const s=await fbGet('games/'+binId);
+  await fbUpdate('games/'+binId,{currentTurn:myColor==='red'?'blue':'red',clueGiven:false,clueWord:'',clueCount:0,guessesLeft:0,log:`⏭ ${myName} أنهى الدور`,ts:Date.now()});
 }
 
 /* ══════════════ WIN ══════════════ */
 function renderWin(st){
   stopTimer();
-  if(gameRef)gameRef.off('value');
+  if(pollInterval)clearInterval(pollInterval);
   go('win');
   const wname=st.winner==='red'?st.redName:st.blueName;
   document.getElementById('wTitle').textContent=`فاز ${wname}! 🏆`;
@@ -937,7 +948,7 @@ function renderWin(st){
   spawnConfetti();S.win();
 }
 
-function newGame(){stopTimer();if(gameRef)gameRef.off('value');location.href=location.href.split('?')[0];}
+function newGame(){stopTimer();if(pollInterval)clearInterval(pollInterval);location.href=location.href.split('?')[0];}
 </script>
 </body>
 </html>
