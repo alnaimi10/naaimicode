@@ -6,7 +6,6 @@
 <title>شخبط 🎨</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-/* --- جميع تنسيقاتك الأصلية كما هي --- */
 :root{
   --red:#E63946; --red2:#FF6B6B; --gold:#FFD60A; --gold2:#FFC300;
   --white:#FFFEF7; --cream:#FFF5D6; --dark:#1A0500; --brown:#5C1A00;
@@ -21,27 +20,6 @@ body{
   position:relative;
   overflow:hidden;
 }
-
-/* التنسيق الجديد لزر الصوت */
-.audio-toggle {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 9999;
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid var(--gold);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: 0.3s;
-}
-.audio-toggle.muted { background: var(--red2); border-color: var(--red); color: white; }
 
 /* ══ BG PATTERN ══ */
 body::before{
@@ -67,20 +45,41 @@ body::after{
 /* ══ SPLASH ══ */
 #splash{background:linear-gradient(135deg,#1A0500 0%,#3D0A00 50%,#1A0500 100%);overflow:hidden;}
 .splash-bg-circles .c{position:absolute;border-radius:50%;animation:floatC 6s ease-in-out infinite;}
-.splash-bg-circles .c1{width:300px;height:300px;background:rgba(255,214,10,.08);top:-100px;right:-100px;}
-.splash-bg-circles .c2{width:200px;height:200px;background:rgba(230,57,70,.1);bottom:-50px;left:-50px;}
+.splash-bg-circles .c1{width:300px;height:300px;background:rgba(255,214,10,.08);top:-100px;right:-100px;animation-delay:0s;}
+.splash-bg-circles .c2{width:200px;height:200px;background:rgba(230,57,70,.1);bottom:-50px;left:-50px;animation-delay:2s;}
+.splash-bg-circles .c3{width:150px;height:150px;background:rgba(255,159,28,.08);top:50%;left:10%;animation-delay:4s;}
 @keyframes floatC{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(1.05)}}
 
 .splash-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:30px 20px;}
-.splash-brush{font-size:80px;animation:brushFloat 3s ease-in-out infinite;}
+
+.splash-brush{font-size:80px;animation:brushAnim 1s ease-out forwards,brushFloat 3s ease-in-out 1s infinite;opacity:0;transform:scale(0) rotate(-30deg);}
+@keyframes brushAnim{0%{opacity:0;transform:scale(0) rotate(-30deg)}60%{transform:scale(1.2) rotate(10deg)}100%{opacity:1;transform:scale(1) rotate(0deg)}}
 @keyframes brushFloat{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-10px) rotate(5deg)}}
 
+.splash-title-wrap{position:relative;}
 .splash-title{
   font-family:'Fredoka One',cursive;
   font-size:clamp(72px,18vw,140px);
   color:var(--gold);
-  text-shadow: 4px 4px 0 var(--red), 8px 8px 0 rgba(0,0,0,.3);
+  text-shadow:
+    4px 4px 0 var(--red),
+    8px 8px 0 rgba(0,0,0,.3);
+  animation:titleDrop 0.8s cubic-bezier(.36,1.8,.5,1) 0.6s backwards;
+  letter-spacing:-2px;
 }
+@keyframes titleDrop{0%{opacity:0;transform:translateY(-80px) scale(0.5)}100%{opacity:1;transform:translateY(0) scale(1)}}
+
+.splash-subtitle{font-size:16px;color:rgba(255,245,214,.6);letter-spacing:2px;animation:fadeUp 0.6s ease 1.2s backwards;}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+
+.splash-colors{display:flex;gap:10px;animation:fadeUp 0.6s ease 1.4s backwards;}
+.splash-color-dot{width:18px;height:18px;border-radius:50%;animation:dotPop 0.5s cubic-bezier(.36,1.8,.5,1) backwards;}
+.splash-color-dot:nth-child(1){background:var(--red);animation-delay:1.5s;}
+.splash-color-dot:nth-child(2){background:var(--gold);animation-delay:1.6s;}
+.splash-color-dot:nth-child(3){background:var(--green);animation-delay:1.7s;}
+.splash-color-dot:nth-child(4){background:var(--blue);animation-delay:1.8s;}
+.splash-color-dot:nth-child(5){background:var(--purple);animation-delay:1.9s;}
+@keyframes dotPop{0%{opacity:0;transform:scale(0)}100%{opacity:1;transform:scale(1)}}
 
 .splash-btn{
   background:linear-gradient(135deg,var(--gold),var(--gold2));
@@ -91,195 +90,811 @@ body::after{
   cursor:pointer;
   box-shadow:0 6px 0 #8B6A00,0 8px 20px rgba(255,214,10,.4);
   transition:all .15s;
+  animation:fadeUp 0.6s ease 2s backwards;
+  position:relative;overflow:hidden;
 }
-.splash-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #8B6A00;}
+.splash-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.3),transparent);border-radius:50px;}
+.splash-btn:hover{transform:translateY(-2px);box-shadow:0 8px 0 #8B6A00,0 12px 24px rgba(255,214,10,.5);}
+.splash-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #8B6A00,0 4px 12px rgba(255,214,10,.3);}
 
-/* --- بقية تنسيقات الكود الأصلي (Setup, Drawing, etc) تم اختصارها هنا لكنها موجودة في الملف النهائي --- */
+.splash-creator{font-size:12px;color:rgba(255,245,214,.4);letter-spacing:1px;animation:fadeUp 0.6s ease 2.2s backwards;}
+.splash-creator span{color:var(--gold);font-weight:700;}
+
+/* PAINT DROPS */
+.paint-drop{position:absolute;border-radius:50%;animation:drip 3s ease-in infinite;}
+@keyframes drip{0%{transform:translateY(-20px) scaleY(0.5);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(100vh) scaleY(1.5);opacity:0}}
+
+/* ══ SETUP ══ */
 #setup{background:var(--cream);overflow-y:auto;padding:20px 16px;}
-.card{background:var(--white);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 4px 0 rgba(0,0,0,.08);border:2px solid rgba(0,0,0,.06);}
-.start-btn{background:linear-gradient(135deg,var(--red),#C1121F);color:#fff;border:none;border-radius:16px;padding:16px;width:100%;font-size:20px;font-weight:900;cursor:pointer;box-shadow:0 6px 0 #8B0000;margin-top:6px;}
+.setup-header{text-align:center;margin-bottom:20px;}
+.setup-title{font-family:'Fredoka One',cursive;font-size:clamp(36px,8vw,56px);color:var(--red);text-shadow:3px 3px 0 rgba(0,0,0,.1);}
+.setup-sub{font-size:14px;color:var(--brown);opacity:.7;}
 
+.card{background:var(--white);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 4px 0 rgba(0,0,0,.08),0 6px 20px rgba(0,0,0,.06);border:2px solid rgba(0,0,0,.06);}
+.card-title{font-size:14px;font-weight:700;color:var(--brown);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+
+.team-row{display:flex;gap:10px;}
+.team-inp{background:var(--cream);border:2px solid rgba(0,0,0,.1);border-radius:12px;padding:10px 14px;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;width:100%;transition:border-color .2s;color:var(--dark);}
+.team-inp:focus{outline:none;border-color:var(--red);}
+.team-inp.red{border-color:rgba(230,57,70,.3);}
+.team-inp.blue{border-color:rgba(17,138,178,.3);}
+
+.players-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.player-inp{background:var(--cream);border:2px solid rgba(0,0,0,.1);border-radius:10px;padding:8px 12px;font-family:'Tajawal',sans-serif;font-size:13px;flex:1;min-width:110px;color:var(--dark);}
+.player-inp:focus{outline:none;border-color:var(--gold);}
+.add-player-btn{background:var(--gold);border:none;border-radius:10px;padding:8px 14px;font-size:18px;cursor:pointer;transition:all .2s;}
+.add-player-btn:hover{background:var(--gold2);transform:scale(1.1);}
+
+.setting-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.setting-label{font-size:14px;font-weight:700;color:var(--dark);}
+.setting-val{font-family:'Fredoka One',cursive;font-size:22px;color:var(--red);min-width:40px;text-align:center;}
+.stepper{display:flex;align-items:center;gap:8px;}
+.step-btn{background:var(--red);color:#fff;border:none;border-radius:50%;width:34px;height:34px;font-size:20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-weight:900;line-height:1;}
+.step-btn:hover{background:var(--red2);transform:scale(1.1);}
+.step-btn.gold{background:var(--gold);color:var(--dark);}
+.step-btn.gold:hover{background:var(--gold2);}
+
+.categories-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.cat-btn{background:var(--cream);border:2px solid rgba(0,0,0,.1);border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--dark);}
+.cat-btn.active{background:var(--gold);border-color:var(--gold2);color:var(--dark);}
+
+.start-btn{
+  background:linear-gradient(135deg,var(--red),#C1121F);
+  color:#fff;border:none;border-radius:16px;
+  padding:16px;width:100%;
+  font-family:'Tajawal',sans-serif;font-size:20px;font-weight:900;
+  cursor:pointer;
+  box-shadow:0 6px 0 #8B0000,0 8px 20px rgba(230,57,70,.4);
+  transition:all .15s;margin-top:6px;
+}
+.start-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #8B0000;}
+
+/* ══ TURN ANNOUNCE ══ */
+#turn-announce{background:linear-gradient(135deg,#1A0500,#3D1200);}
+.ta-content{text-align:center;padding:30px 20px;position:relative;z-index:2;}
+.ta-icon{font-size:72px;animation:taIconPop 0.5s cubic-bezier(.36,1.8,.5,1);}
+@keyframes taIconPop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.ta-label{font-size:15px;color:rgba(255,245,214,.5);letter-spacing:2px;margin-bottom:8px;}
+.ta-name{font-family:'Fredoka One',cursive;font-size:clamp(36px,9vw,64px);color:var(--gold);text-shadow:3px 3px 0 var(--red);}
+.ta-round{font-size:14px;color:rgba(255,245,214,.5);margin-top:8px;}
+.ta-scores{display:flex;gap:20px;justify-content:center;margin:20px 0;}
+.ta-score{text-align:center;background:rgba(255,255,255,.08);border-radius:14px;padding:12px 20px;}
+.ta-score-name{font-size:12px;color:rgba(255,245,214,.5);}
+.ta-score-num{font-family:'Fredoka One',cursive;font-size:32px;color:var(--gold);}
+.ta-btn{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--dark);border:none;border-radius:50px;
+  padding:14px 40px;
+  font-family:'Tajawal',sans-serif;font-size:18px;font-weight:900;
+  cursor:pointer;box-shadow:0 5px 0 #8B6A00;
+  transition:all .15s;margin-top:10px;
+}
+.ta-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #8B6A00;}
+
+/* ══ WORD REVEAL ══ */
+#word-reveal{background:linear-gradient(135deg,#1A0500,#3D0A00);}
+.wr-content{text-align:center;padding:30px 20px;position:relative;z-index:2;}
+.wr-label{font-size:15px;color:rgba(255,245,214,.5);letter-spacing:2px;margin-bottom:16px;}
+.wr-word{
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(48px,12vw,90px);
+  color:var(--gold);
+  text-shadow:4px 4px 0 var(--red),8px 8px 0 rgba(0,0,0,.3);
+  animation:wordPop 0.5s cubic-bezier(.36,1.8,.5,1);
+}
+@keyframes wordPop{0%{transform:scale(0) rotate(-10deg)}60%{transform:scale(1.1) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+.wr-category{font-size:14px;color:rgba(255,245,214,.5);margin-top:8px;}
+.wr-timer{
+  width:100px;height:100px;
+  margin:20px auto;
+  position:relative;
+}
+.wr-timer svg{transform:rotate(-90deg);}
+.wr-timer-bg{fill:none;stroke:rgba(255,255,255,.1);stroke-width:8;}
+.wr-timer-fg{fill:none;stroke:var(--gold);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s;}
+.wr-timer-num{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:36px;color:var(--gold);
+}
+.wr-timer-fg.urgent{stroke:var(--red2);}
+.wr-timer-num.urgent{color:var(--red2);}
+.wr-hint{font-size:14px;color:rgba(255,245,214,.4);margin-top:16px;animation:blink 1.5s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* ══ DRAWING ══ */
 #drawing{background:var(--white);flex-direction:column;padding:0;}
-.draw-header{background:linear-gradient(135deg,var(--red),#C1121F);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;width:100%;}
-#canvas{flex:1;width:100%;background:#FFFEF7;cursor:crosshair;touch-action:none;}
-.draw-toolbar{background:var(--white);border-top:2px solid rgba(0,0,0,.08);padding:8px 10px;display:flex;align-items:center;gap:6px;overflow-x:auto;width:100%;}
-.color-btn{width:32px;height:32px;border-radius:50%;cursor:pointer;flex-shrink:0;}
+.draw-header{
+  background:linear-gradient(135deg,var(--red),#C1121F);
+  padding:10px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+  box-shadow:0 3px 10px rgba(0,0,0,.2);
+}
+.draw-title{font-family:'Fredoka One',cursive;font-size:20px;color:#fff;}
+.draw-timer-pill{
+  background:rgba(0,0,0,.25);
+  border-radius:20px;padding:5px 14px;
+  font-family:'Fredoka One',cursive;font-size:22px;color:var(--gold);
+  min-width:60px;text-align:center;
+  transition:color .3s;
+}
+.draw-timer-pill.urgent{color:var(--red2);animation:urgentShake .3s ease-in-out infinite;}
+@keyframes urgentShake{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+#canvas{flex:1;width:100%;cursor:crosshair;touch-action:none;display:block;}
+
+.draw-toolbar{
+  background:var(--white);
+  border-top:2px solid rgba(0,0,0,.08);
+  padding:8px 10px;
+  display:flex;align-items:center;gap:6px;
+  flex-shrink:0;
+  overflow-x:auto;
+  box-shadow:0 -3px 10px rgba(0,0,0,.08);
+}
+.color-btn{width:32px;height:32px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.color-btn.active{border-color:var(--dark);transform:scale(1.2);}
+.size-btn{background:var(--cream);border:2px solid rgba(0,0,0,.1);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:12px;font-weight:700;transition:all .2s;white-space:nowrap;color:var(--dark);}
+.size-btn.active{background:var(--gold);border-color:var(--gold2);}
+.tool-sep{width:1px;height:28px;background:rgba(0,0,0,.1);flex-shrink:0;}
+.tool-btn{background:var(--cream);border:2px solid rgba(0,0,0,.1);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0;}
+.tool-btn:active{transform:scale(.9);}
+.tool-btn.eraser{background:#f0f0f0;}
+
+/* ══ GUESS ══ */
+#guessing{background:linear-gradient(135deg,#08144A,#0A1A6B);overflow:hidden;}
+.guess-content{text-align:center;padding:30px 20px;position:relative;z-index:2;width:100%;max-width:500px;}
+.guess-drawing-preview{
+  background:var(--white);
+  border-radius:20px;
+  margin:16px auto;
+  overflow:hidden;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+  max-width:340px;
+}
+.guess-drawing-preview canvas{width:100%;display:block;}
+.guess-label{font-size:15px;color:rgba(255,255,255,.6);letter-spacing:2px;margin-bottom:12px;}
+.guess-team{font-family:'Fredoka One',cursive;font-size:clamp(28px,7vw,48px);color:var(--gold);}
+.guess-timer-bar{
+  height:8px;background:rgba(255,255,255,.15);
+  border-radius:4px;margin:16px 0;
+  overflow:hidden;
+}
+.guess-timer-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:4px;transition:width 1s linear;}
+.reveal-btn{
+  background:linear-gradient(135deg,var(--green),#04A57A);
+  color:#fff;border:none;border-radius:14px;
+  padding:14px 32px;
+  font-family:'Tajawal',sans-serif;font-size:18px;font-weight:900;
+  cursor:pointer;box-shadow:0 5px 0 #027A5A;
+  transition:all .15s;margin:8px;
+}
+.reveal-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #027A5A;}
+.correct-btn{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--dark);border:none;border-radius:14px;
+  padding:14px 32px;
+  font-family:'Tajawal',sans-serif;font-size:18px;font-weight:900;
+  cursor:pointer;box-shadow:0 5px 0 #8B6A00;
+  transition:all .15s;margin:8px;
+}
+.correct-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #8B6A00;}
+.wrong-btn{
+  background:linear-gradient(135deg,var(--red),#C1121F);
+  color:#fff;border:none;border-radius:14px;
+  padding:14px 32px;
+  font-family:'Tajawal',sans-serif;font-size:18px;font-weight:900;
+  cursor:pointer;box-shadow:0 5px 0 #8B0000;
+  transition:all .15s;margin:8px;
+}
+.wrong-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #8B0000;}
+.answer-reveal{
+  background:rgba(255,255,255,.15);
+  border-radius:14px;padding:14px 24px;
+  font-family:'Fredoka One',cursive;font-size:32px;color:var(--gold);
+  display:none;margin:10px auto;
+}
+
+/* ══ RESULTS ══ */
+#results{background:linear-gradient(135deg,#1A0500,#3D1200);overflow-y:auto;padding:20px;}
+.results-title{font-family:'Fredoka One',cursive;font-size:clamp(40px,10vw,72px);color:var(--gold);text-align:center;text-shadow:4px 4px 0 var(--red);margin-bottom:8px;}
+.results-sub{text-align:center;font-size:14px;color:rgba(255,245,214,.5);margin-bottom:20px;}
+.results-podium{display:flex;gap:12px;justify-content:center;margin-bottom:20px;align-items:flex-end;}
+.podium-item{text-align:center;flex:1;max-width:160px;}
+.podium-name{font-family:'Fredoka One',cursive;font-size:16px;color:var(--gold);margin-bottom:6px;}
+.podium-score{font-family:'Fredoka One',cursive;font-size:14px;color:rgba(255,245,214,.6);}
+.podium-bar{border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;min-height:60px;}
+.podium-bar.first{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--dark);font-size:28px;}
+.podium-bar.second{background:linear-gradient(135deg,#C0C0C0,#A0A0A0);color:#fff;font-size:22px;}
+
+.rounds-list{display:flex;flex-direction:column;gap:10px;max-width:500px;margin:0 auto;}
+.round-item{background:rgba(255,255,255,.08);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;}
+.round-thumb{width:70px;height:52px;border-radius:8px;overflow:hidden;background:var(--white);flex-shrink:0;}
+.round-thumb canvas{width:100%;height:100%;}
+.round-info{flex:1;}
+.round-word{font-family:'Fredoka One',cursive;font-size:18px;color:var(--gold);}
+.round-drawer{font-size:12px;color:rgba(255,245,214,.5);}
+.round-result{font-size:12px;font-weight:700;padding:3px 10px;border-radius:10px;}
+.round-result.correct{background:rgba(6,214,160,.2);color:var(--green);}
+.round-result.wrong{background:rgba(230,57,70,.2);color:var(--red2);}
+.play-again-btn{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--dark);border:none;border-radius:50px;
+  padding:16px 48px;
+  font-family:'Tajawal',sans-serif;font-size:20px;font-weight:900;
+  cursor:pointer;box-shadow:0 6px 0 #8B6A00;
+  transition:all .15s;margin:20px auto;display:block;
+}
+.play-again-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #8B6A00;}
+
+/* ══ CONFETTI ══ */
+.confetti-piece{position:fixed;width:10px;height:10px;top:-20px;z-index:9999;animation:confettiFall linear forwards;border-radius:2px;pointer-events:none;}
+@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+
+/* ══ FLASH ══ */
+.flash{position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0;transition:opacity .1s;}
+.flash.show{opacity:1;}
+.flash.green{background:rgba(6,214,160,.25);}
+.flash.red{background:rgba(230,57,70,.25);}
+
+/* ══ TOAST ══ */
+.toast{
+  position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:var(--dark);color:var(--gold);
+  border-radius:30px;padding:10px 24px;
+  font-family:'Fredoka One',cursive;font-size:18px;
+  z-index:9997;transition:transform .3s cubic-bezier(.36,1.5,.5,1);
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+  white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
 
-<button id="toggleAudioBtn" class="audio-toggle" onclick="toggleMute()">🔊</button>
 <div class="flash" id="flash"></div>
+<div class="toast" id="toast"></div>
 
 <!-- ══ SPLASH ══ -->
 <div id="splash" class="scr on">
+  <div class="splash-bg-circles">
+    <div class="c c1"></div><div class="c c2"></div><div class="c c3"></div>
+  </div>
+  <!-- Paint drops -->
+  <div class="paint-drop" style="width:12px;height:12px;background:#FFD60A;left:10%;animation-delay:0s;animation-duration:4s;"></div>
+  <div class="paint-drop" style="width:8px;height:8px;background:#E63946;left:30%;animation-delay:1s;animation-duration:3.5s;"></div>
+  <div class="paint-drop" style="width:10px;height:10px;background:#06D6A0;left:60%;animation-delay:2s;animation-duration:4.5s;"></div>
+  <div class="paint-drop" style="width:14px;height:14px;background:#7B2FBE;left:80%;animation-delay:0.5s;animation-duration:3s;"></div>
+  <div class="paint-drop" style="width:9px;height:9px;background:#118AB2;left:45%;animation-delay:1.5s;animation-duration:5s;"></div>
+
   <div class="splash-content">
     <div class="splash-brush">🎨</div>
-    <div class="splash-title">شخبط</div>
+    <div class="splash-title-wrap">
+      <div class="splash-title">شخبط</div>
+    </div>
     <div class="splash-subtitle">لعبة الرسم والتخمين</div>
-    <!-- تم تعديل الدالة هنا لتشمل تشغيل الموسيقى -->
-    <button class="splash-btn" onclick="startApp()">🖌️ العب الآن!</button>
+    <div class="splash-colors">
+      <div class="splash-color-dot"></div>
+      <div class="splash-color-dot"></div>
+      <div class="splash-color-dot"></div>
+      <div class="splash-color-dot"></div>
+      <div class="splash-color-dot"></div>
+    </div>
+    <button class="splash-btn" onclick="playMusic('intro');goSetup()">🖌️ العب الآن!</button>
     <div class="splash-creator">تصميم وتطوير: <span>أسامة النعيمي</span></div>
   </div>
 </div>
 
 <!-- ══ SETUP ══ -->
-<div id="setup" class="scr">
-  <div style="width:100%;max-width:500px;padding:20px;">
-    <div class="card">
-        <h2 style="text-align:center; color:var(--red); margin-bottom:15px;">إعداد اللعبة</h2>
-        <div style="display:flex; gap:10px; margin-bottom:10px;">
-            <input type="text" id="t1" class="card" style="width:50%; padding:10px;" value="الفريق الأحمر">
-            <input type="text" id="t2" class="card" style="width:50%; padding:10px;" value="الفريق الأزرق">
-        </div>
-        <button class="start-btn" onclick="goDrawing()">بدء الرسم!</button>
+<div id="setup" class="scr" style="overflow-y:auto;justify-content:flex-start;padding-top:20px;">
+  <div style="width:100%;max-width:500px;padding:0 16px 80px;">
+    <div class="setup-header">
+      <div class="setup-title">🎨 شخبط</div>
+      <div class="setup-sub">اعداد اللعبة</div>
     </div>
+
+    <!-- Teams -->
+    <div class="card">
+      <div class="card-title">👥 أسماء الفرق</div>
+      <div class="team-row">
+        <input class="team-inp red" id="team1Name" value="الفريق الأحمر" maxlength="16" placeholder="الفريق الأول">
+        <input class="team-inp blue" id="team2Name" value="الفريق الأزرق" maxlength="16" placeholder="الفريق الثاني">
+      </div>
+    </div>
+
+    <!-- Players Team 1 -->
+    <div class="card">
+      <div class="card-title">🔴 لاعبو الفريق الأول</div>
+      <div id="team1Players" class="players-row">
+        <input class="player-inp" placeholder="اسم اللاعب..." maxlength="14">
+        <input class="player-inp" placeholder="اسم اللاعب..." maxlength="14">
+      </div>
+      <button class="add-player-btn" onclick="addPlayer(1)" style="margin-top:8px;">+ لاعب</button>
+    </div>
+
+    <!-- Players Team 2 -->
+    <div class="card">
+      <div class="card-title">🔵 لاعبو الفريق الثاني</div>
+      <div id="team2Players" class="players-row">
+        <input class="player-inp" placeholder="اسم اللاعب..." maxlength="14">
+        <input class="player-inp" placeholder="اسم اللاعب..." maxlength="14">
+      </div>
+      <button class="add-player-btn" onclick="addPlayer(2)" style="margin-top:8px;">+ لاعب</button>
+    </div>
+
+    <!-- Settings -->
+    <div class="card">
+      <div class="card-title">⚙️ إعدادات اللعبة</div>
+      <div class="setting-row">
+        <span class="setting-label">🔄 عدد الجولات</span>
+        <div class="stepper">
+          <button class="step-btn" onclick="change('rounds',-1)">−</button>
+          <span class="setting-val" id="roundsVal">3</span>
+          <button class="step-btn gold" onclick="change('rounds',1)">+</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">⏱️ وقت الرسم (ثانية)</span>
+        <div class="stepper">
+          <button class="step-btn" onclick="change('drawTime',-10)">−</button>
+          <span class="setting-val" id="drawTimeVal">60</span>
+          <button class="step-btn gold" onclick="change('drawTime',10)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="card">
+      <div class="card-title">🏷️ فئات الكلمات</div>
+      <div class="categories-grid" id="catGrid">
+        <button class="cat-btn active" onclick="toggleCat(this,'حيوانات')">🐾 حيوانات</button>
+        <button class="cat-btn active" onclick="toggleCat(this,'أشياء')">📦 أشياء</button>
+        <button class="cat-btn active" onclick="toggleCat(this,'أكل')">🍕 أكل</button>
+        <button class="cat-btn active" onclick="toggleCat(this,'رياضة')">⚽ رياضة</button>
+        <button class="cat-btn active" onclick="toggleCat(this,'طبيعة')">🌿 طبيعة</button>
+        <button class="cat-btn active" onclick="toggleCat(this,'مهن')">👷 مهن</button>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startGame()">🎮 ابدأ اللعبة!</button>
+  </div>
+</div>
+
+<!-- ══ TURN ANNOUNCE ══ -->
+<div id="turn-announce" class="scr">
+  <div class="ta-content">
+    <div class="ta-label">دور الرسام</div>
+    <div class="ta-icon" id="taIcon">🎨</div>
+    <div class="ta-name" id="taName">اللاعب</div>
+    <div class="ta-round" id="taRound">الجولة 1 من 3</div>
+    <div class="ta-scores">
+      <div class="ta-score">
+        <div class="ta-score-name" id="taT1Name">الفريق 1</div>
+        <div class="ta-score-num" id="taT1Score">0</div>
+      </div>
+      <div class="ta-score">
+        <div class="ta-score-name" id="taT2Name">الفريق 2</div>
+        <div class="ta-score-num" id="taT2Score">0</div>
+      </div>
+    </div>
+    <button class="ta-btn" onclick="showWordReveal()">👁️ اعرض الكلمة</button>
+  </div>
+</div>
+
+<!-- ══ WORD REVEAL ══ -->
+<div id="word-reveal" class="scr">
+  <div class="wr-content">
+    <div class="wr-label">🔒 للرسام فقط — لا تُظهر الشاشة!</div>
+    <div class="wr-word" id="wrWord">كلمة</div>
+    <div class="wr-category" id="wrCat">📦 أشياء</div>
+    <div class="wr-timer">
+      <svg width="100" height="100" viewBox="0 0 100 100">
+        <circle class="wr-timer-bg" cx="50" cy="50" r="42" stroke-dasharray="263.9"/>
+        <circle class="wr-timer-fg" id="wrTimerFg" cx="50" cy="50" r="42" stroke-dasharray="263.9" stroke-dashoffset="0"/>
+      </svg>
+      <div class="wr-timer-num" id="wrTimerNum">5</div>
+    </div>
+    <div class="wr-hint">احفظ الكلمة... ستختفي قريباً! 👀</div>
   </div>
 </div>
 
 <!-- ══ DRAWING ══ -->
 <div id="drawing" class="scr">
   <div class="draw-header">
-    <div style="color:white; font-weight:bold;">ارسم الكلمة!</div>
-    <div id="timer" style="color:var(--gold); font-size:24px; font-family:'Fredoka One';">60</div>
+    <div class="draw-title">✏️ ارسم الآن!</div>
+    <div class="draw-timer-pill" id="drawTimerPill">60</div>
   </div>
   <canvas id="canvas"></canvas>
-  <div class="draw-toolbar">
-    <div class="color-btn" style="background:#1A0500;" onclick="setColor('#1A0500')"></div>
-    <div class="color-btn" style="background:#E63946;" onclick="setColor('#E63946')"></div>
-    <div class="color-btn" style="background:#06D6A0;" onclick="setColor('#06D6A0')"></div>
-    <button onclick="clearCanvas()" style="padding:5px 10px; border-radius:8px; border:1px solid #ccc;">🗑️ مسح</button>
+  <div class="draw-toolbar" id="toolbar">
+    <!-- Colors -->
+    <div class="color-btn active" style="background:#1A0500;" data-color="#1A0500" onclick="setColor(this)"></div>
+    <div class="color-btn" style="background:#E63946;" data-color="#E63946" onclick="setColor(this)"></div>
+    <div class="color-btn" style="background:#FFD60A;" data-color="#FFD60A" onclick="setColor(this)"></div>
+    <div class="color-btn" style="background:#06D6A0;" data-color="#06D6A0" onclick="setColor(this)"></div>
+    <div class="color-btn" style="background:#118AB2;" data-color="#118AB2" onclick="setColor(this)"></div>
+    <div class="color-btn" style="background:#7B2FBE;" data-color="#7B2FBE" onclick="setColor(this)"></div>
+    <div class="color-btn" style="background:#FF9F1C;" data-color="#FF9F1C" onclick="setColor(this)"></div>
+    <div class="color-btn" style="background:#FFFEF7;" data-color="#FFFEF7" onclick="setColor(this)" style="border:2px solid #ccc;"></div>
+    <div class="tool-sep"></div>
+    <!-- Sizes -->
+    <button class="size-btn active" data-size="4" onclick="setSize(this)">S</button>
+    <button class="size-btn" data-size="8" onclick="setSize(this)">M</button>
+    <button class="size-btn" data-size="16" onclick="setSize(this)">L</button>
+    <div class="tool-sep"></div>
+    <!-- Tools -->
+    <button class="tool-btn eraser" onclick="toggleEraser(this)" id="eraserBtn">🧹</button>
+    <button class="tool-btn" onclick="clearCanvas()" title="مسح الكل">🗑️</button>
+    <button class="tool-btn" onclick="undoCanvas()" title="تراجع">↩️</button>
+  </div>
+</div>
+
+<!-- ══ GUESSING ══ -->
+<div id="guessing" class="scr">
+  <div class="guess-content">
+    <div class="guess-label">خمّن الرسمة!</div>
+    <div class="guess-team" id="guessTeam">فريق الأحمر</div>
+    <div class="guess-drawing-preview">
+      <canvas id="previewCanvas" width="340" height="255"></canvas>
+    </div>
+    <div class="guess-timer-bar"><div class="guess-timer-fill" id="guessTimerFill" style="width:100%"></div></div>
+    <div id="answerRevealDiv" class="answer-reveal"></div>
+    <div id="guessBtns">
+      <button class="reveal-btn" onclick="revealAnswer()">👁️ اظهر الجواب</button>
+    </div>
+    <div id="scoreBtns" style="display:none;">
+      <button class="correct-btn" onclick="scorePoint(true)">✅ أجابوا صح!</button>
+      <button class="wrong-btn" onclick="scorePoint(false)">❌ لم يخمنوا</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTS ══ -->
+<div id="results" class="scr" style="justify-content:flex-start;padding-top:20px;">
+  <div style="max-width:500px;margin:0 auto;width:100%;padding:0 16px 80px;">
+    <div class="results-title" id="resultsTitle">🏆 النتائج!</div>
+    <div class="results-sub" id="resultsSub"></div>
+    <div class="results-podium" id="podium"></div>
+    <div class="rounds-list" id="roundsList"></div>
+    <button class="play-again-btn" onclick="playAgain()">🎮 العب مجدداً!</button>
+    <div style="text-align:center;font-size:12px;color:rgba(255,245,214,.3);margin-top:10px;">تصميم: أسامة النعيمي</div>
   </div>
 </div>
 
 <script>
-/* ══════════════ المطور الصوتي ══════════════ */
-let audioCtx;
-let masterGain;
-let bgOscillator;
-let isMuted = false;
+/* ══════════════ AUDIO ══════════════ */
+let _ac;
+let bgAudio = new Audio(); // كائن لتشغيل الأغاني
+bgAudio.loop = true;
 
-function initAudioSystem() {
-    if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    masterGain = audioCtx.createGain();
-    masterGain.connect(audioCtx.destination);
-    
-    // إنشاء نغمة خلفية ناعمة (Background Ambient)
-    bgOscillator = audioCtx.createOscillator();
-    let bgGain = audioCtx.createGain();
-    
-    bgOscillator.type = 'triangle'; 
-    bgOscillator.frequency.setValueAtTime(110, audioCtx.currentTime); // نغمة عميقة وهادئة
-    
-    bgGain.gain.setValueAtTime(0.03, audioCtx.currentTime); // مستوى صوت منخفض جداً للخلفية
-    
-    bgOscillator.connect(bgGain);
-    bgGain.connect(masterGain);
-    bgOscillator.start();
+function aC(){
+  if(!_ac)_ac=new(window.AudioContext||window.webkitAudioContext)();
+  if(_ac.state === 'suspended') _ac.resume(); // تفعيل الصوت عند التفاعل
+  return _ac;
 }
 
-function toggleMute() {
-    if (!audioCtx) return;
-    isMuted = !isMuted;
-    const btn = document.getElementById('toggleAudioBtn');
-    
-    if (isMuted) {
-        masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
-        btn.innerHTML = '🔇';
-        btn.classList.add('muted');
-    } else {
-        masterGain.gain.setTargetAtTime(1, audioCtx.currentTime, 0.1);
-        btn.innerHTML = '🔊';
-        btn.classList.remove('muted');
+function playMusic(type){
+  aC(); 
+  // استبدل الروابط أدناه بروابط Raw من GitHub الخاصة بك
+  const tracks = {
+    'intro': 'https://raw.githubusercontent.com/username/repo/main/intro.mp3', 
+    'game': 'https://raw.githubusercontent.com/username/repo/main/gameplay.mp3'
+  };
+
+  if(tracks[type]){
+    bgAudio.src = tracks[type];
+    bgAudio.volume = 0.4;
+    bgAudio.play().catch(e => console.log("Audio play blocked"));
+  }
+}
+
+function tone(f,d,t='sine',v=0.15,delay=0){
+  try{
+    const c=aC(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.type=t;o.frequency.value=f;
+    g.gain.setValueAtTime(0,c.currentTime+delay);
+    g.gain.linearRampToValueAtTime(v,c.currentTime+delay+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+delay+d);
+    o.start(c.currentTime+delay);o.stop(c.currentTime+delay+d+0.05);
+  }catch(e){}
+}
+
+const SFX={
+  click:()=>{tone(800,.06,'sine',.12);},
+  start:()=>{
+    [523,659,784,1047].forEach((n,i)=>tone(n,.15,'sine',.18,i*0.1));
+  },
+  wordReveal:()=>{
+    tone(1200,.08,'sine',.2);
+    setTimeout(()=>tone(1400,.08,'sine',.2),80);
+    setTimeout(()=>tone(1600,.15,'sine',.2),160);
+  },
+  tick:()=>tone(600,.04,'sine',.08),
+  urgent:()=>{tone(880,.05,'square',.15);setTimeout(()=>tone(880,.05,'square',.15),150);},
+  correct:()=>{
+    [523,659,784,1047,1568].forEach((n,i)=>tone(n,.2,'sine',.2,i*0.08));
+  },
+  wrong:()=>{
+    tone(200,.1,'sawtooth',.2);
+    setTimeout(()=>tone(160,.15,'sawtooth',.2),100);
+  },
+  draw:()=>tone(400,.03,'sine',.05),
+  win:()=>{
+    const notes=[523,659,784,523,659,784,1047];
+    notes.forEach((n,i)=>tone(n,.25,'sine',.2,i*0.12));
+  },
+  countdown:()=>{
+    [900,800,700,600,500].forEach((n,i)=>tone(n,.1,'sine',.15,i*1.0));
+  }
+};
+
+/* ══════════════ STATE ══════════════ */
+let G={
+  rounds:3,drawTime:60,
+  teams:['الفريق الأحمر','الفريق الأزرق'],
+  players:[[],[]],
+  scores:[0,0],
+  currentRound:0,
+  currentTeam:0,
+  playerIndex:[0,0],
+  categories:[],
+  roundHistory:[],
+  currentWord:'',
+  currentCat:'',
+  wordRevealTimer:null,
+  drawTimer:null,
+  guessTimer:null,
+};
+
+const WORDS={
+  'حيوانات':['قطة','كلب','أسد','فيل','زرافة','قرد','دلفين','نمر','ثعلب','أرنب','بطريق','تمساح','حصان','بقرة','ديك','نعامة','غزال','ذئب','دب','سمكة'],
+  'أشياء':['كرسي','طاولة','مفتاح','هاتف','ساعة','قلم','كتاب','نظارة','حقيبة','مظلة','مقص','مشط','بالون','سيارة','طائرة','قارب','دراجة','قطار','مصباح','تلفاز'],
+  'أكل':['بيتزا','برجر','سوشي','تفاحة','موزة','كيكة','آيس كريم','شاورما','فلافل','كبسة','مندي','شاهي','قهوة','عصير','سلطة','بيض','خبز','تمر','رمان','فراولة'],
+  'رياضة':['كرة القدم','كرة السلة','سباحة','جري','ملاكمة','تنس','غولف','رماية','كرة طائرة','جمباز','ركوب خيل','تسلق','كاراتيه','رفع أثقال','كرة يد'],
+  'طبيعة':['شجرة','زهرة','جبل','بحر','نهر','صحراء','غابة','شلال','قمر','نجمة','شمس','سحابة','بركان','جزيرة','كهف','صخرة','رمال','ثلج','قوس قزح','ريح'],
+  'مهن':['طبيب','مهندس','معلم','شرطي','طيار','طباخ','رسام','مزارع','صياد','بناء','محامي','ممرضة','حلاق','نجار','كهربائي','سائق','لاعب','مغني','ممثل','كاتب']
+};
+
+let selectedCats=['حيوانات','أشياء','أكل','رياضة','طبيعة','مهن'];
+let settings={rounds:3,drawTime:60};
+
+/* ══════════════ CANVAS ══════════════ */
+let ctx, isDrawing=false, lastX=0, lastY=0;
+let currentColor='#1A0500', currentSize=4, isEraser=false;
+let undoStack=[];
+
+function initCanvas(){
+  const canvas=document.getElementById('canvas');
+  const rect=canvas.getBoundingClientRect();
+  canvas.width=canvas.offsetWidth;
+  canvas.height=canvas.offsetHeight;
+  ctx=canvas.getContext('2d');
+  ctx.fillStyle='#FFFEF7';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.lineCap='round';
+  ctx.lineJoin='round';
+  saveUndo();
+
+  canvas.addEventListener('mousedown',startDraw);
+  canvas.addEventListener('mousemove',draw);
+  canvas.addEventListener('mouseup',endDraw);
+  canvas.addEventListener('mouseleave',endDraw);
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0];const r=canvas.getBoundingClientRect();startDraw({offsetX:t.clientX-r.left,offsetY:t.clientY-r.top});},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();const t=e.touches[0];const r=canvas.getBoundingClientRect();draw({offsetX:t.clientX-r.left,offsetY:t.clientY-r.top});},{passive:false});
+  canvas.addEventListener('touchend',endDraw);
+}
+
+function startDraw(e){
+  isDrawing=true;
+  [lastX,lastY]=[e.offsetX,e.offsetY];
+}
+
+function draw(e){
+  if(!isDrawing)return;
+  ctx.beginPath();
+  ctx.moveTo(lastX,lastY);
+  ctx.lineTo(e.offsetX,e.offsetY);
+  ctx.strokeStyle=isEraser?'#FFFEF7':currentColor;
+  ctx.lineWidth=currentSize;
+  ctx.stroke();
+  [lastX,lastY]=[e.offsetX,e.offsetY];
+}
+
+function endDraw(){
+  if(isDrawing)saveUndo();
+  isDrawing=false;
+}
+
+function saveUndo(){
+  if(undoStack.length>20)undoStack.shift();
+  undoStack.push(ctx.canvas.toDataURL());
+}
+
+function undoCanvas(){
+  if(undoStack.length<=1)return;
+  undoStack.pop();
+  let img=new Image();
+  img.src=undoStack[undoStack.length-1];
+  img.onload=()=>{
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+    ctx.drawImage(img,0,0);
+  };
+}
+
+function clearCanvas(){
+  ctx.fillStyle='#FFFEF7';
+  ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  saveUndo();
+}
+
+function setColor(btn){
+  isEraser=false;
+  currentColor=btn.dataset.color;
+  document.querySelectorAll('.color-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function setSize(btn){
+  currentSize=parseInt(btn.dataset.size);
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function toggleEraser(btn){
+  isEraser=!isEraser;
+  btn.classList.toggle('active',isEraser);
+}
+
+/* ══════════════ FLOW ══════════════ */
+function goSetup(){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('setup').classList.add('on');
+}
+
+function addPlayer(t){
+  const row=document.getElementById(`team${t}Players`);
+  const inp=document.createElement('input');
+  inp.className='player-inp';
+  inp.placeholder='اسم اللاعب...';
+  inp.maxLength=14;
+  row.appendChild(inp);
+}
+
+function change(k,v){
+  if(k==='rounds')settings.rounds=Math.max(1,settings.rounds+v);
+  if(k==='drawTime')settings.drawTime=Math.max(10,settings.drawTime+v);
+  document.getElementById(`${k}Val`).innerText=settings[k];
+}
+
+function toggleCat(btn,cat){
+  if(selectedCats.includes(cat)){
+    if(selectedCats.length>1){
+      selectedCats=selectedCats.filter(c=>c!==cat);
+      btn.classList.remove('active');
     }
+  }else{
+    selectedCats.push(cat);
+    btn.classList.add('active');
+  }
 }
 
-function playSfx(freq, type = 'sine') {
-    if (!audioCtx || isMuted) return;
-    let osc = audioCtx.createOscillator();
-    let g = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-    osc.connect(g);
-    g.connect(masterGain);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.5);
+function startGame(){
+  G.teams=[document.getElementById('team1Name').value,document.getElementById('team2Name').value];
+  G.players[0]=Array.from(document.querySelectorAll('#team1Players .player-inp')).map(i=>i.value||'لاعب 🔴').filter(v=>v);
+  G.players[1]=Array.from(document.querySelectorAll('#team2Players .player-inp')).map(i=>i.value||'لاعب 🔵').filter(v=>v);
+  G.rounds=settings.rounds;
+  G.drawTime=settings.drawTime;
+  G.scores=[0,0];
+  G.currentRound=1;
+  G.currentTeam=0;
+  G.playerIndex=[0,0];
+  G.roundHistory=[];
+  SFX.start();
+  playMusic('game');
+  nextTurn();
 }
 
-/* ══════════════ نظام التنقل ══════════════ */
-function startApp() {
-    initAudioSystem();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    playSfx(523.25); // نغمة ترحيبية (C5)
-    showScreen('setup');
+function nextTurn(){
+  const drawer=G.players[G.currentTeam][G.playerIndex[G.currentTeam]%G.players[G.currentTeam].length];
+  document.getElementById('taName').innerText=drawer;
+  document.getElementById('taRound').innerText=`الجولة ${G.currentRound} من ${G.rounds}`;
+  document.getElementById('taT1Name').innerText=G.teams[0];
+  document.getElementById('taT2Name').innerText=G.teams[1];
+  document.getElementById('taT1Score').innerText=G.scores[0];
+  document.getElementById('taT2Score').innerText=G.scores[1];
+  showScreen('turn-announce');
 }
 
-function showScreen(id) {
-    document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
-    document.getElementById(id).classList.add('on');
-    if(id === 'drawing') initCanvas();
+function showWordReveal(){
+  const cats=selectedCats;
+  const cat=cats[Math.floor(Math.random()*cats.length)];
+  const word=WORDS[cat][Math.floor(Math.random()*WORDS[cat].length)];
+  G.currentWord=word;
+  G.currentCat=cat;
+  document.getElementById('wrWord').innerText=word;
+  document.getElementById('wrCat').innerText=cat;
+  showScreen('word-reveal');
+  SFX.wordReveal();
+  let sec=5;
+  const num=document.getElementById('wrTimerNum');
+  const fg=document.getElementById('wrTimerFg');
+  num.innerText=sec;
+  fg.style.strokeDashoffset=0;
+  const timer=setInterval(()=>{
+    sec--;
+    num.innerText=sec;
+    fg.style.strokeDashoffset=263.9*(1-sec/5);
+    if(sec<=0){clearInterval(timer);startDrawPhase();}
+  },1000);
 }
 
-function goDrawing() {
-    playSfx(659.25); // نغمة (E5)
-    showScreen('drawing');
-    startTimer();
+function startDrawPhase(){
+  showScreen('drawing');
+  initCanvas();
+  let sec=G.drawTime;
+  const pill=document.getElementById('drawTimerPill');
+  pill.innerText=sec;
+  pill.classList.remove('urgent');
+  const timer=setInterval(()=>{
+    sec--;
+    pill.innerText=sec;
+    if(sec<=10){pill.classList.add('urgent');SFX.tick();}
+    if(sec<=0){clearInterval(timer);finishDraw();}
+  },1000);
 }
 
-/* ══════════════ نظام الرسم ══════════════ */
-let canvas, ctx, drawing = false;
-function initCanvas() {
-    canvas = document.getElementById('canvas');
-    ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight - 120;
-    ctx.lineCap = 'round';
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = '#1A0500';
-
-    canvas.addEventListener('mousedown', () => drawing = true);
-    canvas.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('touchstart', (e) => { drawing = true; e.preventDefault(); });
-    canvas.addEventListener('touchend', () => { drawing = false; ctx.beginPath(); });
-    canvas.addEventListener('touchmove', (e) => { draw(e.touches[0]); e.preventDefault(); });
+function finishDraw(){
+  const preview=document.getElementById('previewCanvas');
+  const pCtx=preview.getContext('2d');
+  pCtx.drawImage(document.getElementById('canvas'),0,0,340,255);
+  document.getElementById('guessTeam').innerText=G.teams[G.currentTeam===0?0:1];
+  document.getElementById('answerRevealDiv').style.display='none';
+  document.getElementById('guessBtns').style.display='block';
+  document.getElementById('scoreBtns').style.display='none';
+  showScreen('guessing');
 }
 
-function draw(e) {
-    if (!drawing) return;
-    let rect = canvas.getBoundingClientRect();
-    let x = (e.clientX || e.pageX) - rect.left;
-    let y = (e.clientY || e.pageY) - rect.top;
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
+function revealAnswer(){
+  document.getElementById('answerRevealDiv').innerText=G.currentWord;
+  document.getElementById('answerRevealDiv').style.display='block';
+  document.getElementById('guessBtns').style.display='none';
+  document.getElementById('scoreBtns').style.display='block';
 }
 
-function setColor(c) { ctx.strokeStyle = c; playSfx(880, 'square'); }
-function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); playSfx(220); }
-
-/* ══════════════ المؤقت ══════════════ */
-function startTimer() {
-    let timeLeft = 60;
-    let tElem = document.getElementById('timer');
-    let inter = setInterval(() => {
-        timeLeft--;
-        tElem.innerText = timeLeft;
-        if(timeLeft <= 10) {
-            tElem.style.color = 'var(--red)';
-            playSfx(440); // صوت تنبيه للوقت
-        }
-        if(timeLeft <= 0) {
-            clearInterval(inter);
-            alert("انتهى الوقت!");
-            showScreen('splash');
-        }
-    }, 1000);
+function scorePoint(win){
+  if(win)G.scores[G.currentTeam]++;
+  G.roundHistory.push({word:G.currentWord,drawer:G.players[G.currentTeam][G.playerIndex[G.currentTeam]%G.players[G.currentTeam].length],win,img:document.getElementById('canvas').toDataURL()});
+  if(G.currentTeam===0){G.currentTeam=1;G.playerIndex[1]++;}
+  else{G.currentTeam=0;G.playerIndex[0]++;G.currentRound++;}
+  if(G.currentRound>G.rounds)showResults();
+  else nextTurn();
 }
+
+function showResults(){
+  showScreen('results');
+  SFX.win();
+  const list=document.getElementById('roundsList');
+  list.innerHTML=G.roundHistory.map(r=>`
+    <div class="round-item">
+      <div class="round-thumb"><canvas width="70" height="52" id="c-${Math.random()}"></canvas></div>
+      <div class="round-info">
+        <div class="round-word">${r.word}</div>
+        <div class="round-drawer">رسم: ${r.drawer}</div>
+      </div>
+      <div class="round-result ${r.win?'correct':'wrong'}">${r.win?'صح':'خطأ'}</div>
+    </div>
+  `).join('');
+  G.roundHistory.forEach((r,i)=>{
+    const canv=list.querySelectorAll('canvas')[i];
+    const img=new Image();img.src=r.img;img.onload=()=>canv.getContext('2d').drawImage(img,0,0,70,52);
+  });
+}
+
+function showScreen(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+function playAgain(){location.reload();}
 </script>
 </body>
 </html>
